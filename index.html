@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doge 'em All</title>
+    <style>
+        *{
+            background-color: rgb(24, 245, 226);
+        }
+        .player{
+            position: absolute;
+            width: 70px;
+            height: 130px;
+            bottom: 120px;
+            background-color: red;
+        
+        }
+       .turn{
+            position: absolute;
+            width: 70px;
+            height: 130px;
+            bottom: 120px;
+            background-color: rgb(0, 140, 255);
+            transform: rotateY(180deg)
+        
+        }
+        .vice{
+            position: absolute;
+            width: 70px;
+            height: 130px;
+            bottom: 120px;
+            background-color: red;
+            transform: rotateY(180deg);
+            
+        
+        }
+        #grass{
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 1365px;
+            height: 170px;
+            background-color: rgb(29, 194, 29);
+        }
+        progress{
+            position: absolute;
+            display: none;
+            width: 130px;
+            bottom: 107%;
+            right: -50%
+        }
+        .head{
+            position: absolute;
+            width: 50px;
+            top: 20%;
+            left: 35%;
+            height: 11px;
+            background-color: rgb(26, 25, 25);
+        }
+        #tail{
+            position: absolute;
+            bottom: -45px;
+            width: 11px;
+            height: 40px;
+            transform: rotate(180deg);
+            background-color:  rgb(26, 25, 25);
+        }
+        #bullet{
+            position: absolute;
+            width: 30px;
+            height: 6px;
+            top: -13px;
+            left: 3px;
+            background-color: yellow;
+            overflow-x: hidden;
+        }
+       
+        .deck{
+            position: absolute;
+            width: 220px;
+            height: 30px;
+            left: 500px;
+            top: 350px;
+            background-color: rgb(2, 62, 117);
+        }
+    </style>
+</head>
+<body>
+    <div id="grass">
+
+    </div>
+    <div class="player">
+    
+    </div>
+    <progress value="10" max="10" ></progress>
+    <p class="head"></p>
+    <p id="tail"></p>
+    <p class="deck"></p>
+</body>
+<script>
+    let leftgoto = 1320;
+    let deck = document.querySelector(".deck");
+    let player = document.querySelector(".player");
+        let head = document.querySelector(".head");
+    let tail = document.getElementById("tail");
+    head.append(tail);
+    
+    player.append(head);
+    let progress = document.querySelector("progress");
+    let playerright = player.style.right;
+    let playerleft = player.style.left;
+    let playerbottom = player.style.bottom;
+    let playertop = player.style.top;
+
+    let deckright = deck.style.right;
+    let deckleft = deck.style.left;
+    let deckbottom = deck.style.bottom;
+    let decktop = deck.style.top;
+
+    let health = progress.value;
+    player.append(progress);
+    progress.style.display = "block"
+    let goleft = 0;
+    let gogo;
+    let s =false;
+    let a = false;
+    let goback;
+    let quiteback = false;
+    function moveleft(){
+        head.style.transform = "rotateY(360deg)";
+      //  a = true;
+    clearInterval(goback);
+        if(progress.value < 10){
+        progress.value += 0.08;
+    }
+     gogo = setInterval(function(){
+         leftgoto -= 20;
+            goleft += 5;
+            player.style.left = goleft + "px";
+            if(goleft>1280){
+                clearInterval(gogo);
+            }
+        } , 20);
+    }
+    function moveright(){
+        head.style.transform = "rotateY(180deg)";
+        head.style.right = 50 + "px"
+        clearInterval(gogo);
+        progress.value -= 0.02;
+       goback = setInterval(function(){
+           leftgoto += 20
+           if(goleft > 0&&goleft < 2){
+               clearInterval(goback);
+              // alert("over");
+               quiteback = true;
+           }
+           else if(goleft > 0){
+               quiteback = false;
+               goleft -= 5;
+               player.style.left = goleft + "px";
+           }
+       } , 20)
+    }
+    let upvelocity = 120;
+    function goup(){
+        let upup = setInterval(function(){
+            if(playerbottom > decktop&&playerright > deckleft ){alert("hello")}
+            upvelocity += 20;
+            player.style.bottom = upvelocity + "px";
+            if(upvelocity > 320){
+               let godown  = setInterval(function(){
+          upvelocity -= 15;
+            player.style.bottom = upvelocity + "px";
+            if(upvelocity < 170){
+                clearInterval(godown);
+                clearInterval(upup);
+            }
+               } , 20)
+            }
+        } , 20)
+    }
+    function fire(){
+        let firebullet = 3;
+       let bullet = document.createElement("p");
+       bullet.id = "bullet";
+       head.appendChild(bullet);
+       let gobullet = setInterval(function(){
+           firebullet += 10;
+           bullet.style.left = firebullet + "px";
+           if(firebullet > 1320){
+               head.removeChild(bullet);
+               clearInterval(gobullet)
+           } 
+       } , 2)
+    }
+    window.onkeyup = function(e){
+        if(progress.value < 10){
+        progress.value += 0.08;
+    }
+        if(e.keyCode === 39){
+            a = true;
+            s = false;
+            if(!s){
+         moveleft();
+         clearInterval(goback);
+            }
+        }
+        if(e.keyCode === 37){
+            a = false;
+            s = true;
+            if(!a){
+            moveright();
+            clearInterval(gogo);
+        }
+        }
+        if(e.keyCode === 38){
+            goup();
+        }
+    }
+    window.onkeydown = function(e){
+        if(e.keyCode === 32){
+            fire();
+        }
+    }
+    // codee's working great till now  , implemented right going movement.
+</script>
+</html>
